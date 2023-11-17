@@ -13,6 +13,10 @@ public class Product {
         this.price = price;
     }
 
+    public Product(Product product){
+        this(product.title,product.numberOfProduct,product.price);
+    }
+
     public String getTitle() {
         return title;
     }
@@ -23,6 +27,18 @@ public class Product {
 
     public double getPrice() {
         return price;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setNumberOfProduct(int numberOfProduct) {
+        this.numberOfProduct = numberOfProduct;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 
     public void displayProduct() {

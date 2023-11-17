@@ -13,37 +13,12 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Book book1 = new Book("48 laws of power", 30, 44.99, "Robert Greene");
-        Book book2 = new Book("Witcher - the last wish", 20, 49.99, "Andrzej Sapkowski");
-        Book book3 = new Book("Pan Tadeusz", 100, 34.99, "Adam Mickiewicz");
-        Book book4 = new Book("A Song of Ice and Fire", 50, 59.99, "George Raymond Richard Martin");
 
-        Disc disc1 = new Disc("Kinematografia", 10, 35.99, "Paktofonika");
-        Disc disc2 = new Disc("The Sacrament of Sin", 20, 47.99, "Power Wolf");
-        Disc disc3 = new Disc("Hail to the King", 30, 45.99, "Avenged Sevenfold");
-        Disc disc4 = new Disc("Ultravioled", 50, 28.99, "usedcvnt");
 
-        Toy toy1 = new Toy("100 Board games", 30, 50.99, 6);
-        Toy toy2 = new Toy("Pokemon trading cards", 200, 20.99, 6);
-        Toy toy3 = new Toy("Howwheels - car", 100, 25.99, 5);
-        Toy toy4 = new Toy("Drunk roulette", 20, 40.99, 18);
 
         List<Product> productList = new ArrayList<>();
+        initializeShop(productList);
 
-        productList.add(book1);
-        productList.add(book2);
-        productList.add(book3);
-        productList.add(book4);
-
-        productList.add(disc1);
-        productList.add(disc2);
-        productList.add(disc3);
-        productList.add(disc4);
-
-        productList.add(toy1);
-        productList.add(toy2);
-        productList.add(toy3);
-        productList.add(toy4);
 
         System.out.println("====================");
         System.out.println("WELCOME TO THE SHOP!");
@@ -70,35 +45,88 @@ public class Main {
         System.out.println("= Y - YES = N - NO =");
         System.out.println("====================");
         Scanner scanner = new Scanner(System.in);
-        String orderOption = scanner.nextLine();
+
 
         System.out.println(" ");
 
 
 
-        switch (orderOption) {
-            case "y", "Y": {
-                List<Product> yourCart = new ArrayList<>();
-                for (Product productss : productList) {
-                    System.out.println("What you want to order?");
-                String orderProd = scanner.nextLine();
-                if(Objects.equals(orderProd, productss.getTitle())){
-                    yourCart.add(productss);
-                    int amountAfterOrder = productss.getNumberOfProduct() -1;
-                    System.out.println(amountAfterOrder);
+        List<Product> basket = new ArrayList<>();
+        String name;
+        int quantity;
+        String choice = "T";
+        boolean isFind = false;
+        while (choice.equalsIgnoreCase("T") || choice.equalsIgnoreCase("Tak")
+                || choice.equalsIgnoreCase("Yes") || choice.equalsIgnoreCase("Y")){
+            System.out.println("Podaj nazwę produktu który chcesz dodać do koszyka");
+            name = scanner.nextLine();
+            System.out.println("Podaj liczbę sztuk produktu");
+            quantity = scanner.nextInt();
+            scanner.nextLine();
+
+            for (Product product : productList) {
+                if(product.getTitle().equalsIgnoreCase(name)){
+                    Product prod = new Product(product);
+                    if(product.getNumberOfProduct() > quantity){
+                        prod.setNumberOfProduct(quantity);
+                        basket.add(prod);
+                        product.setNumberOfProduct(product.getNumberOfProduct() - quantity);
+                        isFind = true;
+                    }
+                    else if(product.getNumberOfProduct() == quantity){
+                        prod.setNumberOfProduct(quantity);
+                        basket.add(prod);
+                        isFind = true;
+                        productList.remove(product);
+                        break;
+                    }
+                    else{
+                        System.out.printf("Nie ma %d %s w sklepe. Do koszyka dodano %d\n",
+                                quantity, name, product.getNumberOfProduct());
+                        basket.add(product);
+                        isFind = true;
+                        productList.remove(product);
+                        break;
+                    }
                 }
-                }
-                System.out.println("Your cart: ");
-                System.out.println("__________");
-                for (Product products : yourCart) {
-                    products.displayProduct();
-                }
+
             }
 
-            case "n", "N": {
-                break;
-            }
+            if(!isFind)System.out.println("Tego produktu nie ma w sklepie");
+            System.out.println("czy dodać kolejny produkt. Wpisz Tak/T/Yes/Y ");
+            choice = scanner.nextLine();
         }
+
+        double grossPrice = 0;
+        System.out.println("Twój koszyk");
+        for(Product prod: basket){
+            prod.displayProduct();
+            grossPrice += prod.countPrice();
+        }
+        System.out.println("_____________________");
+        System.out.printf("Wartość koszyka to %.2f zł\n", grossPrice);
+        System.out.println("_____________________");
+
+        System.out.printf("\n\n\n");
+
+        System.out.println("_____________________");
+        System.out.println("Potwierdzam swoje zamowienie tak/t/yes/y");
+        System.out.println("_____________________");
+        String choice2;
+        choice2 = scanner.nextLine();
+switch (choice2){
+    case "tak", "Tak","t","T","yes","Yes","y","Y":
+}
+
+        grossPrice = 0;
+        System.out.println("Twój sklep");
+        for(Product product :productList){
+            product.displayProduct();
+            grossPrice += product.countPrice();
+        }
+        System.out.println("_____________________");
+        System.out.printf("Wartość sklepu to %.2f zł\n", grossPrice);
+        System.out.println("_____________________");
 
 //
 
@@ -143,5 +171,21 @@ public class Main {
 //                chooseOption = scanner.nextInt();
 //            }
 //        }
+    }
+    public static void initializeShop (List<Product> productList){
+        productList.add(new Book("48 laws of power", 30, 44.99, "Robert Greene"));
+        productList.add(new Book("Witcher - the last wish", 20, 49.99, "Andrzej Sapkowski"));
+        productList.add(new Book("Pan Tadeusz", 100, 34.99, "Adam Mickiewicz"));
+        productList.add(new Book("A Song of Ice and Fire", 50, 59.99, "George Raymond Richard Martin"));
+
+        productList.add(new Disc("Kinematografia", 10, 35.99, "Paktofonika"));
+        productList.add( new Disc("The Sacrament of Sin", 20, 47.99, "Power Wolf"));
+        productList.add( new Disc("Hail to the King", 30, 45.99, "Avenged Sevenfold"));
+        productList.add( new Disc("Ultraviolet", 50, 28.99, "usedcvnt"));
+
+        productList.add( new Toy("100 Board games", 30, 50.99, 6));
+        productList.add( new Toy("Pokemon trading cards", 200, 20.99, 6));
+        productList.add( new Toy("Hotwheels - car", 100, 25.99, 5));
+        productList.add( new Toy("Drunk roulette", 20, 40.99, 18));
     }
 }
